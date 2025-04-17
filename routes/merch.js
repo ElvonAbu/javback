@@ -5,59 +5,59 @@ const bodyparser=require('body-parser');
 const usermode=require('../models/merch.js');
 app.use(express.json());
 app.use(bodyparser.json());
+const multer = require('multer');
+const path = require('path');
+const verifyToken=require('./login.js');
 
-router.get('/',async(req,res)=>{
-    const alluse=await usermode.find();
-    res.status(201).send(alluse);
 
-})
-router.post('/',async(req,res)=>{
-    console.log('this is the request body',req.body);
-    try{ 
-        const{firstname,number,Address,occupation}=req.body;
-        const newus= new usermode({firstname,number,Address,occupation});
-        const tt=await newus.save();
-         console.log('new account',tt);
-         res.status(201).send({message:"account created succesfully"});
-    }
-    catch(error){
-        console.log("this is the error",error.message);
-    }
-   
-})
-router.delete('/:id', async (req, res) => {
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Directory to store uploaded files
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`); // Unique filename
+    },
+});
+
+const upload = multer({ 
+    storage,
+    fileFilter: (req, file, cb) => {
+        // Accept only image files
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed'), false);
+        }
+    },
+});
+
+// Route to handle product creation with picture upload
+router.post('/products', upload.single('picture'), verifyToken,async (req, res) => {
     try {
-        const { id } = req.params; // Extract ID from the route parameter
-        console.log(id);
-        const deletedUser = await usermode.findByIdAndDelete(id); // Delete user by ID
+        const { name, price, description } = req.body;
 
-        if (!deletedUser) {
-            return res.status(404).send({ message: "User not found" }); // Handle case where user doesn't exist
+        // Validate required fields
+        if (!name || !price || !description || !req.file) {
+            return res.status(400).send({ message: "All fields are required, including a picture" });
         }
 
-        res.status(200).send({ message: "User deleted successfully", user: deletedUser });
+        // Create a new product
+        const newProduct = new ProductModel({
+            name,
+            price,
+            description,
+            picture: req.file.path, // Save the file path to the database
+        });
+
+        // Save the product to the database
+        const savedProduct = await newProduct.save();
+        console.log('New product created:', savedProduct);
+
+        res.status(201).send({ message: "Product created successfully", product: savedProduct });
     } catch (error) {
-        res.status(500).send({ error: error.message }); // Handle server errors
+        console.error("Error creating product:", error.message);
+        res.status(500).send({ message: "Failed to create product", error: error.message });
     }
 });
-router.put('/:id',async(req,res)=>{
-   try{
-    const id=req.params.id;
-    console.log("this is the id",id);
-    const updbo=req.body;
-    const updatedbody= await usermode.findByIdAndUpdate(id,updbo);
-    if(!updatedbody){
-        res.status(400).send({message:"bad request"});
-    }
-    else{
-        console.log("this is the new body:",updatedbody);
-        res.status(200).send(updatedbody);
-    }
 
-   }catch (error){
-    res.status(500).send({error:error.message});
-   }
-})
-
-
-module.exports=router;
+module.exports = router;

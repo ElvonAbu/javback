@@ -27,9 +27,12 @@ router.get('/', async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         const {email,password}= req.body;
-       
-
         // Hash the password
+        const existingUser = await usermode.findOne({ email });
+        if (existingUser) {
+            return res.status(400).send({ message: "User already registered" });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Save the new user
@@ -45,7 +48,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Login Route
-router.post('/login',verifyToken,async (req, res) => {
+router.post('/login',async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -90,9 +93,11 @@ function verifyToken(req, res, next) {
 }
 
 // Protected Route Example
-router.get('/protected', verifyToken, (req, res) => {
-    res.status(200).send({ message: "Access granted to protected route", user: req.user });
-});
+// router.get('/protected', verifyToken, (req, res) => {
+//     res.status(200).send({ message: "Access granted to protected route", user: req.user });
+// });
+
+
 router.delete('/:id', async (req, res) => {
     try {
         const { id } = req.params; // Extract ID from the route parameter
@@ -108,5 +113,6 @@ router.delete('/:id', async (req, res) => {
         res.status(500).send({ error: error.message }); // Handle server errors
     }
 });
-
+module.exports={verifyToken};
 module.exports = router;
+

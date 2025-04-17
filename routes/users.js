@@ -14,7 +14,8 @@ router.get('/',async(req,res)=>{
 router.post('/',async(req,res)=>{
     console.log('this is the request body',req.body);
     try{ 
-        const{firstname,number,Address,occupation}=req.body;
+        const{firstname,number,Address,occupation,email,accountdetails}=req.body;
+        
         const newus= new usermode({firstname,number,Address,occupation});
         const tt=await newus.save();
          console.log('new account',tt);
