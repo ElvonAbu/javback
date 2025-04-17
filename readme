@@ -1,0 +1,45 @@
+# Elvon Project
+
+This is a Node.js-based project that includes features such as user authentication, product management, cart functionality, order placement, and integration with Paystack for payment processing.
+
+## Features
+- **User Authentication**: Secure user login and registration using JWT.
+- **Product Management**: Add, update, and manage products with images.
+- **Cart Functionality**: Users can add items to their cart and proceed to checkout.
+- **Order Placement**: Place orders with shipping details and payment status tracking.
+- **Paystack Integration**: Payment processing and verification using Paystack.
+- **File Uploads**: Upload product images using `multer`.
+
+---
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd elvon
+   ```
+
+---
+
+## Environment Variables
+
+Set up the following environment variables in a `.env` file:
+
+MONGO_URI=mongodb://<your-mongo-uri>
+JWT_SECRET=<your-jwt-secret>
+PAYSTACK_SECRET_KEY=<your-paystack-secret-key>
+
+API Endpoints
+Authentication
+POST /register: Register a new user.
+POST /login: Login and receive a JWT token.
+Products
+POST /products: Add a new product (requires image upload).
+GET /products: Fetch all products.
+Cart
+POST /cart: Add items to the cart.
+GET /cart: Retrieve the user's cart.
+Orders
+POST /place-order: Place an order and initialize Paystack payment.
+GET /verify-payment/:reference: Verify payment 
