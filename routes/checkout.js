@@ -41,6 +41,7 @@ router.post('/place-order', verifyToken,async (req, res) => {
         }
 
         const paymentUrl = paystackResponse.data.data.authorization_url;
+        window.location.href=paymentUrl;
 
         // Step 3: Create a new checkout/order with payment status as 'pending'
         const newOrder = new Checkout({
