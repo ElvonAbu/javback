@@ -34,9 +34,9 @@ API Endpoints
 Authentication
 POST /register: Register a new user.
 POST /login: Login and receive a JWT token.
-Products
-POST /products: Add a new product (requires image upload).
-GET /products: Fetch all products.
+Merch
+POST /merch: Add a new product (requires image upload).
+GET /merch: Fetch all products.
 Cart
 POST /cart: Add items to the cart.
 GET /cart: Retrieve the user's cart.
