@@ -59,5 +59,17 @@ router.post('/products', upload.single('picture'), verifyToken,async (req, res) 
         res.status(500).send({ message: "Failed to create product", error: error.message });
     }
 });
+router.get('/products', async (req, res) => {
+    try {
+        // Fetch all products from the database
+        const products = await ProductModel.find({}, 'name price description');
+
+        // Respond with the product details
+        res.status(200).json({ message: "Products fetched successfully", products });
+    } catch (error) {
+        console.error("Error fetching products:", error.message);
+        res.status(500).send({ message: "Failed to fetch products", error: error.message });
+    }
+});
 
 module.exports = router;
