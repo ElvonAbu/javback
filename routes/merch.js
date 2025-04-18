@@ -8,6 +8,7 @@ app.use(bodyparser.json());
 const multer = require('multer');
 const path = require('path');
 const verifyToken=require('./login.js');
+const ProductModel = require('../models/product');
 
 
 const storage = multer.diskStorage({
@@ -64,7 +65,7 @@ router.get('/products', async (req, res) => {
         // Fetch all products from the database
         const products = await ProductModel.find({}, 'name price description');
 
-        // Respond with the product details
+        
         res.status(200).json({ message: "Products fetched successfully", products });
     } catch (error) {
         console.error("Error fetching products:", error.message);
