@@ -8,7 +8,7 @@ app.use(bodyparser.json());
 const multer = require('multer');
 const path = require('path');
 const verifyToken=require('./login.js');
-const ProductModel = require('../models/product');
+const ProductModel = require('../models/merch');
 
 
 const storage = multer.diskStorage({
